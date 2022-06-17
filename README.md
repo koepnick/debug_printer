@@ -37,4 +37,5 @@ This goes for **all** 3rd party packages.
 - [ ] Vim functions to write and populate line numbers
 - [ ] Object ancestry
 - [ ] List enumeration
+  - Kinda working but no tabs
 * [ ] PyPi submission
