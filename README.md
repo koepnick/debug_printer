@@ -17,7 +17,9 @@ Even installing under `uid 0` in a container is a seriously bad idea.
 1) `cd` into a temporary directory
 2) `git clone https://github.io/koepnick/debug_printer`
 3) If using a virtual environment: `python setup.py install`
+
 -- or --
+
 3) If using "globally": `python setup.py install --user`
 
 ## Features
