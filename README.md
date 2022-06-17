@@ -14,6 +14,8 @@ Please, **please** do not install to your system site packages. The road to hell
 
 Even installing under `uid 0` in a container is a seriously bad idea. 
 
+This goes for **all** 3rd party packages.
+
 1) `cd` into a temporary directory
 2) `git clone https://github.io/koepnick/debug_printer`
 3) If using a virtual environment: `python setup.py install`
