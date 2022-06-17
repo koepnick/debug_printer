@@ -10,11 +10,6 @@ I am intentionally **not** using the native logging system. This is intended as 
 It is generally preferable to drop into a PDB shell for debugging. This is **not** meant to replace that. Please don't allow printing everything to become a habit. The road to hell is paved with `print()` statements.
 
 ## Installation
-Please, **please** do not install to your system site packages. The road to hell is also paved with `sudo pip install`
-
-Even installing under `uid 0` in a container is a seriously bad idea. 
-
-This goes for **all** 3rd party packages.
 
 1) `cd` into a temporary directory
 2) `git clone https://github.io/koepnick/debug_printer`
@@ -23,6 +18,14 @@ This goes for **all** 3rd party packages.
 -- or --
 
 3) If using "globally": `python setup.py install --user`
+
+---
+
+Please, **please** do not install to your system site packages. The road to hell is also paved with `sudo pip install`
+
+Even installing under `uid 0` in a container is a seriously bad idea. 
+
+This goes for **all** 3rd party packages.
 
 ## Features
 - [x] Basic coloring
