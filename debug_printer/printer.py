@@ -60,24 +60,76 @@ class MessageSegment(object):
             self.msg = msg
         elif isinstance(msg, dict):
             self._dict_parse(msg)
+        else:
+            self._obj_parse(msg)
         return None
 
+    def _obj_parse(_, obj):
+        ancestry = type.mro(obj)
+        # The last member is usually the base object which
+        # doesn't have a callable __str__ method
+        spacing = 2
+        ancestry.reverse()
+        output = ""
+        for idx, ancestor in enumerate(ancestry):
+            try:
+                friendly_name = ancestor.__str__() + " (" + str(ancestor.__class__) + ')'
+            except TypeError:
+                friendly_name = ancestor
+            spaces = "─" * spacing * idx
+            if idx == 0:
+                output += f"\n┌{spaces} {friendly_name}"
+            elif idx == len(ancestry)-1:
+                output += f"\n└{spaces} {friendly_name} {ANSICOLORS.FG.CYAN}⟵ {ANSICOLORS.CLEAR}"
+            else:
+                output += f"\n├{spaces} {friendly_name}"
+        print(output)
+
+
     def _dict_parse(_, list_data):
+        tab_length = 4
         json_format = json.dumps(list_data)
-        track_line = ""
-        for newline in json_format.split('\n'):
-            keyvals = newline.split(",")
-            for keyval in keyvals:
-                keyval_split = keyval.split(":")
-                print(keyval)
-                key = MessageSegment(keyval_split[0])
-                val = MessageSegment(keyval_split[1])
-                key.color(ANSICOLORS.BLUE)
-                val.color(ANSICOLORS.GREEN)
-                track_line += f"{key.format()}: {val.format()}\n"
+        level = 0
+        title = "Dictionary"
+        title = ANSICOLORS.STYLES.REVERSED + title + ANSICOLORS.CLEAR + '\n'
+        track_line = title.format()
+        for keyval_pair in json_format.split(','):
+            if '{' in keyval_pair:
+                track_line += ' ' * tab_length * level + '{' + '\n'
+                keyval_pair = re.sub(r'\s*{', '', keyval_pair)
+                level += 1
+            if '}' in keyval_pair:
+                level -= 1
+                track_line += ' ' * tab_length * level + '}' + '\n'
+                keyval_pair = re.sub(r'\s*}', '', keyval_pair)
+            print(f"At level {level}")
+            print("  " + keyval_pair)
+            keyval = keyval_pair.split(":")
+            key, val = keyval[0].strip(), keyval[1].strip()
+            track_line += ' ' * tab_length * level + f"{key}: {val}\n"
+        # for newline in json_format.split('\n'):
+        #     print(newline)
+        #     keyvals = newline.split(",")
+        #     for keyval in keyvals:
+        #         if '{' in keyval:
+        #             keyval = keyval.split('{')[-1]
+        #             track_line = track_line + ' '*(level*tab_length) + '{\n'
+        #             level += 1
+        #         if '}' in keyval:
+        #             level -= 1
+        #             keyval = keyval.split('}')[-1]
+        #             track_line = track_line + ' '*(level*tab_length) + '}\n'
+        #         spaces = len(re.findall(r' ', newline))
+        #         if ':' in keyval:
+        #             keyval_split = keyval.split(":")
+        #             print(keyval)
+        #             key = MessageSegment(keyval_split[0])
+        #             val = MessageSegment(keyval_split[1])
+        #             key.color(ANSICOLORS.BLUE)
+        #             val.color(ANSICOLORS.GREEN)
+        #             track_line += ' '*spaces + f"{key.format()}: {val.format()}\n"
 
         print(track_line)
-        print(type(json_format))
 
     def color(self, color):
         self.msg = f"{color}{self.msg}"
